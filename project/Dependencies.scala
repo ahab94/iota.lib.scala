@@ -4,16 +4,17 @@ object Dependencies {
 
   val http = Seq("com.softwaremill.sttp" %% "core" % "1.1.4")
 
-  val json = Seq()
+  val iotaLibs = Seq("com.github.iotaledger" % "iota~lib~java" % "0.9.10")
 
-  val misc = Seq()
+  val json = Seq()
 
   val all: Seq[ModuleID] =
     http ++
       json ++
-      misc
+      iotaLibs
 
   val resolvers = Seq(
-    "Typesafe Repo" at "http://repo.typesafe.com/typesafe/releases/"
+    "Typesafe Repo" at "http://repo.typesafe.com/typesafe/releases/",
+    "jitpack.io" at "https://jitpack.io"
   )
 }
