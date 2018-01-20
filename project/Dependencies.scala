@@ -6,7 +6,7 @@ object Dependencies {
 
   val iotaLibs = Seq("com.github.iotaledger" % "iota~lib~java" % "0.9.10")
 
-  val json = Seq()
+  val json = Seq("com.softwaremill.sttp" %% "json4s" % "1.1.4")
 
   val all: Seq[ModuleID] =
     http ++
