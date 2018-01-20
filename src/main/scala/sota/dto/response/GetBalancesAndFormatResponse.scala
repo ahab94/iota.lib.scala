@@ -3,7 +3,7 @@ package sota.dto.response
 import jota.model.Input
 
 /**
-  * Response of {@link jota.dto.request.IotaBroadcastTransactionRequest}.
+  * Response of {@link sota.dto.request.IotaBroadcastTransactionRequest}.
   **/
 case class GetBalancesAndFormatResponse(inputs: List[Input],
                                         totalBalance: Long,

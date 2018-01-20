@@ -1,7 +1,7 @@
 package sota.dto.response
 
 /**
-  * Response of {@link jota.dto.request.IotaBroadcastTransactionRequest}.
+  * Response of {@link sota.dto.request.IotaBroadcastTransactionRequest}.
   **/
 
 class BroadcastTransactionsResponse(duration: Long)

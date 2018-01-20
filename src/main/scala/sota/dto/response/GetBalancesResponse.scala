@@ -1,7 +1,7 @@
 package sota.dto.response
 
 /**
-  * Response of {@link jota.dto.request.IotaGetBalancesRequest}.
+  * Response of {@link sota.dto.request.IotaGetBalancesRequest}.
   **/
 case class GetBalancesResponse(
                                 balances: List[String],

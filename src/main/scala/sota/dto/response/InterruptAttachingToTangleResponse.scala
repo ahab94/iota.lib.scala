@@ -1,6 +1,6 @@
 package sota.dto.response
 
 /**
-  * Response of {@link jota.dto.request.IotaCommandRequest}.
+  * Response of {@link sota.dto.request.IotaCommandRequest}.
   **/
 case class InterruptAttachingToTangleResponse(duration: Long)

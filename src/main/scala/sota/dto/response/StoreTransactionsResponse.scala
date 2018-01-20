@@ -2,6 +2,6 @@ package sota.dto.response
 
 
 /**
-  * Response of {@link jota.dto.request.IotaStoreTransactionsRequest}.
+  * Response of {@link sota.dto.request.IotaStoreTransactionsRequest}.
   **/
 case class StoreTransactionsResponse(duration: Long)

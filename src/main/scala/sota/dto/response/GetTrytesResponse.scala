@@ -1,7 +1,7 @@
 package sota.dto.response
 
 /**
-  * Response of {@link jota.dto.request.IotaGetTrytesRequest}.
+  * Response of {@link sota.dto.request.IotaGetTrytesRequest}.
   **/
 case class GetTrytesResponse(trytes: List[String],
                              duration: Long)
