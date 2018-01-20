@@ -6,4 +6,5 @@ package sota.dto.response
 case class GetBalancesResponse(
                                 balances: List[String],
                                 milestone: String,
-                                milestoneIndex: Int)
+                                milestoneIndex: Int,
+                                duration: Long)

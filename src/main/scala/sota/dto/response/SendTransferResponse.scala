@@ -6,4 +6,5 @@ import jota.model.Transaction
   * Response of api request 'sendTransfer'.
   **/
 case class SendTransferResponse(transactions: List[Transaction],
-                                successfully: List[Boolean])
+                                successfully: List[Boolean],
+                                duration: Long)

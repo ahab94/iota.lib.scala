@@ -8,4 +8,5 @@ import jota.model.{Bundle, Input}
 class GetAccountDataResponse(addresses: List[String],
                              transferBundle: List[Bundle],
                              inputs: List[Input],
-                             balance: Long)
+                             balance: Long,
+                             duration: Long)

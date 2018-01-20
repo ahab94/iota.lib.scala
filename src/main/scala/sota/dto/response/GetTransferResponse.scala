@@ -6,4 +6,5 @@ import jota.model.Bundle
   * Response of api request 'getTransfer'.
   **/
 
-case class GetTransferResponse(transferBundle: List[Bundle])
+case class GetTransferResponse(transferBundle: List[Bundle],
+                               duration: Long)

@@ -19,6 +19,7 @@ case class GetNodeInfoResponse(
                                 packetsQueueSize: Int,
                                 time: Long,
                                 tips: Int,
-                                transactionsToRequest: Int
+                                transactionsToRequest: Int,
+                                duration: Long
                               )
 
