@@ -1,0 +1,5 @@
+package sota
+
+class IotaAPI {
+
+}

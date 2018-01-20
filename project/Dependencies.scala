@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
 
-  val http = Seq()
+  val http = Seq("com.softwaremill.sttp" %% "core" % "1.1.4")
 
   val json = Seq()
 
