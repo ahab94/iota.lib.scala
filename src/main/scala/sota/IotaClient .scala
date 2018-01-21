@@ -17,6 +17,7 @@ case class IotaClientConfig(protocol: String = "http", host: String = "127.0.0.1
 
 class IotaClient(config: IotaClientConfig = IotaClientConfig(),
                  implicit val apiBackend: SttpBackend[Id, Nothing] = HttpURLConnectionBackend()) {
+
   private val headers: Map[String, String] = Map("Content-Type" -> "application/json",
     "User-Agent" -> "JOTA-API wrapper",
     "Content-Type" -> "application/json",

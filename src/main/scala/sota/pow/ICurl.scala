@@ -70,11 +70,4 @@ trait ICurl {
     * @param state The state.
     */
   def setState(state: List[Int]): Unit
-
-  /**
-    * Clones this instance.
-    *
-    * @return A new instance.
-    */
-  override def clone: ICurl
 }
