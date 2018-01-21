@@ -1,7 +1,5 @@
 package sota.dto.request
 
-import jota.IotaAPICommands
-
 /**
   * This class represents the core API request 'attachToTangle'.
   *
@@ -12,5 +10,5 @@ case class IotaAttachToTangleRequest(
                                       branchTransaction: String,
                                       minWeightMagnitude: Integer,
                                       trytes: List[String],
-                                      command: String = IotaAPICommands.ATTACH_TO_TANGLE.command()
+                                      command: String = IotaAPICommands.ATTACH_TO_TANGLE
                                     )
