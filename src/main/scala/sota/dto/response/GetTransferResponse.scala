@@ -1,6 +1,6 @@
 package sota.dto.response
 
-import jota.model.Bundle
+import sota.model.Bundle
 
 /**
   * Response of api request 'getTransfer'.

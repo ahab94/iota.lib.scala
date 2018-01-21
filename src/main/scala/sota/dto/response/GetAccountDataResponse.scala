@@ -1,6 +1,6 @@
 package sota.dto.response
 
-import jota.model.{Bundle, Input}
+import sota.model.{Bundle, Input}
 
 /**
   * Response of api request 'getAccountData'.

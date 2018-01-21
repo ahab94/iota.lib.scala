@@ -1,6 +1,6 @@
 package sota.dto.response
 
-import jota.model.Neighbor
+import sota.model.Neighbor
 
 /**
   * Response of {@link jota.dto.request.IotaCommandRequest}.

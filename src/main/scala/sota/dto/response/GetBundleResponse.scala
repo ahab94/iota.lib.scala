@@ -1,6 +1,6 @@
 package sota.dto.response
 
-import jota.model.Transaction
+import sota.model.Transaction
 
 /**
   * Response of api request 'getBundle.
