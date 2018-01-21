@@ -1,6 +1,6 @@
 package sota.model
 
-import jota.pow.ICurl
+import sota.pow.ICurl
 
 case class Transaction(hash: String,
                        signatureFragments: String,
