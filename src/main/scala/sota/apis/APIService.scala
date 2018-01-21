@@ -11,7 +11,7 @@ object DefaultHeaders {
   val DEFAULTS = Map("Content-Type" -> "application/json", "User-Agent" -> "JOTA-API wrapper")
 }
 
-class APIRequests(uri: Uri) {
+class APIService(uri: Uri) {
 
   def requestTemplate: RequestT[Id, String, Nothing] = {
     val headers = DefaultHeaders.DEFAULTS
