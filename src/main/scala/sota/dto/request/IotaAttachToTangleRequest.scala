@@ -11,5 +11,6 @@ case class IotaAttachToTangleRequest(
                                       trunkTransaction: String,
                                       branchTransaction: String,
                                       minWeightMagnitude: Integer,
-                                      trytes: List[String])
-  extends IotaCommandRequest(IotaAPICommands.ATTACH_TO_TANGLE.command())
+                                      trytes: List[String],
+                                      command: String = IotaAPICommands.ATTACH_TO_TANGLE.command()
+                                    )

@@ -7,5 +7,6 @@ import jota.IotaAPICommands
   *
   * Broadcast a list of transactions to all neighbors. The input trytes for this call are provided by attachToTangle
   **/
-case class IotaBroadcastTransactionRequest(trytes: List[String])
-  extends IotaCommandRequest(IotaAPICommands.BROADCAST_TRANSACTIONS.command())
+case class IotaBroadcastTransactionRequest(trytes: List[String],
+                                           command: String = IotaAPICommands.BROADCAST_TRANSACTIONS.command())
+
