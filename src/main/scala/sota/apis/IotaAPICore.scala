@@ -1,6 +1,7 @@
 package sota.apis
 
 import com.softwaremill.sttp.Uri
+import sota.dto.response._
 
 /**
   * This class provides access to the Iota core API
@@ -11,85 +12,58 @@ case class IotaClientConfig(protocol: String = "http", host: String = "localhost
   val iriUrl: Uri = Uri(protocol, host, port)
 }
 
-class IotaAPICore(config: IotaClientConfig) extends IotaAPICoreRef {
+class IotaAPICore(config: IotaClientConfig) {
 
   val X_IOTA_API_VERSION_HEADER: Map[String, String] = Map("X-IOTA-API-Version" -> "1")
   val uri: Uri = config.iriUrl
   val service: APIService = new APIService(uri)
 
   //WIP
-  
-  override def getTransactionsObjects(): Unit = ???
 
-  override def findTransactionObjects(): Unit = ???
+  def getNodeInfo: GetNodeInfoResponse = ???
 
-  override def getLatestInclusion(): Unit = ???
+  def getNeighbors: GetNeighborsResponse = ???
 
-  override def broadcastAndStore(): Unit = ???
+  def addNeighbors(uris: String*): AddNeighborsResponse = ???
 
-  override def getNewAddress(): Unit = ???
+  def removeNeighbors(uris: String*): RemoveNeighborsResponse = ???
 
-  override def getInputs(): Unit = ???
+  def getTips: GetTipsResponse = ???
 
-  override def prepareTransfers(): Unit = ???
+  def findTransactions(addresses: Array[String], tags: Array[String], approvees: Array[String], bundles: Array[String])
+  : FindTransactionResponse = ???
 
-  override def sendTrytes(): Unit = ???
+  def findTransactionsByAddresses(addresses: String*): FindTransactionResponse = ???
 
-  override def sendTransfer(): Unit = ???
+  def findTransactionsByBundles(bundles: String*): FindTransactionResponse = ???
 
-  override def replayBundle(): Unit = ???
+  def findTransactionsByApprovees(approvees: String*): FindTransactionResponse = ???
 
-  override def getBundle(): Unit = ???
+  def findTransactionsByDigests(digests: String*): FindTransactionResponse = ???
 
-  override def getTransfers(): Unit = ???
+  def getInclusionStates(transactions: Array[String], tips: Array[String]): GetInclusionStateResponse = ???
 
-  override def initiateTransfer(): Unit = ???
+  def getTrytes(hashes: String*): GetTrytesResponse = ???
 
-  override def getAccountData(): Unit = ???
+  def getTransactionsToApprove(depth: Integer): GetTransactionsToApproveResponse = ???
 
-  override def convertUnits(): Unit = ???
+  def getBalances(threshold: Integer, addresses: List[String]): GetBalancesResponse = ???
 
-  override def addChecksum(): Unit = ???
+  def attachToTangle(trunkTransaction: String, branchTransaction: String, minWeightMagnitude: Integer, trytes: String*)
+  : GetAttachToTangleResponse = ???
 
-  override def removeChecksum(): Unit = ???
+  def interruptAttachingToTangle: InterruptAttachingToTangleResponse = ???
 
-  override def isValidChecksum(): Unit = ???
+  def broadcastTransactions(trytes: String*): BroadcastTransactionsResponse = ???
 
-  override def checkAddress(): Unit = ???
+  def storeTransactions(trytes: String*): StoreTransactionsResponse = ???
 
-  override def isAddress(): Unit = ???
+  def getProtocol: String = config.protocol
 
-  override def isArrayOfHashes(): Unit = ???
+  def getHost: String = config.host
 
-  override def isArrayOfTrytes(): Unit = ???
+  def getPort: String = config.protocol
 
-  override def inNinesTrytes(): Unit = ???
+  def getURI: Uri = config.iriUrl
 
-  override def isTransfersCollectionValid(): Unit = ???
-
-  override def isTrytes(): Unit = ???
-
-  override def isValidSeed(): Unit = ???
-
-  override def isValidTransfer(): Unit = ???
-
-  override def isValue(): Unit = ???
-
-  override def toTrytes(): Unit = ???
-
-  override def trytes(): Unit = ???
-
-  override def trits(): Unit = ???
-
-  override def validateSignatures(): Unit = ???
-
-  override def getKey(): Unit = ???
-
-  override def getDigest(): Unit = ???
-
-  override def finalizeAddress(): Unit = ???
-
-  override def validateAddress(): Unit = ???
-
-  override def addSignature(): Unit = ???
 }
