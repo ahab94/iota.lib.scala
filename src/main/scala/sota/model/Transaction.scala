@@ -1,6 +1,6 @@
 package sota.model
 
-import sota.pow.ICurl
+import sota.pow.Curl
 
 case class Transaction(hash: String,
                        signatureFragments: String,
@@ -19,6 +19,6 @@ case class Transaction(hash: String,
                        tag: String,
                        attachmentTimestampLowerBound: Long,
                        attachmentTimestampUpperBound: Long,
-                       customCurl: ICurl = null) {
+                       customCurl: Curl = null) {
   //WIP::add logic
 }
