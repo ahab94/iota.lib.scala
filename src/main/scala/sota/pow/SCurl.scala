@@ -6,8 +6,34 @@ package sota.pow
   *
   * author: ahab94
   **/
-class SCurl extends Curl {
 
+sealed trait Mode
+
+case object CURLP81 extends Mode
+
+case object CURLP27 extends Mode
+
+case object KERL extends Mode
+
+object SpongeFactory {
+
+  def create(mode: Mode): Option[SCurl] = mode match {
+    case CURLP81 => None //return Scurl
+    case CURLP27 => None //return Scurl
+    case KERL => None //return Scurl
+    case _ => None
+  }
+
+}
+
+
+sealed trait ModeOpt
+
+case class ModeObject(mode: Mode) extends ModeOpt
+
+case class ModeWithPair(pair: Boolean, mode: Mode) extends ModeOpt
+
+class SCurl(modeOpt: ModeOpt) extends Curl {
 
   /**
     * The hash length.
@@ -17,13 +43,45 @@ class SCurl extends Curl {
 
   val NUMBER_OF_ROUNDSP81 = 81
   val NUMBER_OF_ROUNDSP27 = 27
-  private val numberOfRounds = 0
+  private var numberOfRounds = 0
 
   private val TRUTH_TABLE = List(1, 0, -1, 2, 1, -1, 0, 2, -1, 1, 0)
-  private val stateLow: List[Long] = List()
-  private val stateHigh: List[Long] = List()
+  private var stateLow: List[Long] = List()
+  private var stateHigh: List[Long] = List()
   private val scratchpad: List[Int] = List(STATE_LENGTH)
-  private val state: List[Int] = List()
+  private var state: List[Int] = List()
+
+
+  modeOpt match {
+    case ModeObject(mode) =>
+      import java.util.NoSuchElementException
+      mode match {
+        case CURLP27 => numberOfRounds = NUMBER_OF_ROUNDSP27
+        case CURLP81 => numberOfRounds = NUMBER_OF_ROUNDSP81
+        case _ => throw new NoSuchElementException("Only Curl-P-27 and Curl-P-81 are supported.")
+      }
+      state = List(STATE_LENGTH)
+      stateHigh = null
+
+    case ModeWithPair(pair, mode) =>
+      import java.util.NoSuchElementException
+      mode match {
+        case CURLP27 => numberOfRounds = NUMBER_OF_ROUNDSP27
+        case CURLP81 => numberOfRounds = NUMBER_OF_ROUNDSP81
+        case _ => throw new NoSuchElementException("Only Curl-P-27 and Curl-P-81 are supported.")
+      }
+      if (pair) {
+        stateHigh = List(STATE_LENGTH)
+        stateLow = List(STATE_LENGTH)
+        state = null
+        //set
+      }
+      else {
+        state = List(STATE_LENGTH)
+        stateHigh = null
+        stateLow = null
+      }
+  }
 
   /**
     * Absorbs the specified trits.
