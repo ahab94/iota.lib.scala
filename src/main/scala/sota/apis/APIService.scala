@@ -50,10 +50,10 @@ class APIService(uri: Uri) {
     * {@code curl http://localhost:14265 -X POST -H 'X-IOTA-API-Version: 1.4.1' -H 'Content-Type: application/json'}
     * {@code -d '{"command": "addNeighbors", "uris": ["udp://8.8.8.8:14265", "udp://8.8.8.5:14265"]}'}
     */
-  def addNeighborsRequest(iotaNeighborsRequest: IotaNeighborsRequest): RequestT[Id, GetNeighborsResponse, Nothing] = {
+  def addNeighborsRequest(iotaNeighborsRequest: IotaNeighborsRequest): RequestT[Id, AddNeighborsResponse, Nothing] = {
     requestTemplate
       .body(iotaNeighborsRequest)
-      .response(asJson[GetNeighborsResponse])
+      .response(asJson[AddNeighborsResponse])
   }
 
   /**
@@ -62,10 +62,10 @@ class APIService(uri: Uri) {
     * {@code curl http://localhost:14265 -X POST -H 'X-IOTA-API-Version: 1.4.1' -H 'Content-Type: application/json'}
     * {@code -d '{"command": "removeNeighbors", "uris": ["udp://8.8.8.8:14265", "udp://8.8.8.5:14265"]}'}
     */
-  def removeNeighborsRequest(iotaNeighborsRequest: IotaNeighborsRequest): RequestT[Id, GetNeighborsResponse, Nothing] = {
+  def removeNeighborsRequest(iotaNeighborsRequest: IotaNeighborsRequest): RequestT[Id, RemoveNeighborsResponse, Nothing] = {
     requestTemplate
       .body(iotaNeighborsRequest)
-      .response(asJson[GetNeighborsResponse])
+      .response(asJson[RemoveNeighborsResponse])
   }
 
   /**
