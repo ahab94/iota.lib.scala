@@ -1,6 +1,6 @@
 package sota
 
-import com.softwaremill.sttp._
+import com.softwaremill.sttp.{HttpURLConnectionBackend, Id, SttpBackend}
 import sota.apis.{IotaAPICore, IotaClientConfig}
 
 /**
@@ -11,7 +11,8 @@ import sota.apis.{IotaAPICore, IotaClientConfig}
 
 
 class IotaClient(config: IotaClientConfig = IotaClientConfig(),
-                 implicit val apiBackend: SttpBackend[Id, Nothing] = HttpURLConnectionBackend())
-  extends IotaAPICore(config) {
+                 customApiBackend: SttpBackend[Id, Nothing] = HttpURLConnectionBackend())
+  extends IotaAPICore(config, customApiBackend) {
   //WIP
+
 }
