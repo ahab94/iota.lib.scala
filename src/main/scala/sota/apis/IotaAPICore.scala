@@ -18,7 +18,7 @@ class IotaAPICore(config: IotaClientConfig) {
   val uri: Uri = config.iriUrl
   val service: APIService = new APIService(uri)
 
-  //WIP
+  //TODO implement client api functions
 
   def getNodeInfo: GetNodeInfoResponse = ???
 

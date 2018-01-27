@@ -20,5 +20,5 @@ case class Transaction(hash: String,
                        attachmentTimestampLowerBound: Long,
                        attachmentTimestampUpperBound: Long,
                        customCurl: ICurl = null) {
-  //WIP::add logic
+  //TODO::add logic
 }
