@@ -20,7 +20,7 @@ case class TrxModel(hash: String = null,
                     trunkTransaction: String = null,
                     branchTransaction: String = null,
                     nonce: String = null,
-                    persistence: Boolean = null,
+                    persistence: Boolean = false,
                     attachmentTimestamp: Long = 0L,
                     tag: String = null,
                     attachmentTimestampLowerBound: Long = 0L,
@@ -69,23 +69,23 @@ class Transaction(trxOpt: Option[Trx] = None) {
           val attachmentTsLower = Converter.longValue(util.Arrays.copyOfRange(transactionTrits, 7884, 7911))
           val attachmentTsUpper = Converter.longValue(util.Arrays.copyOfRange(transactionTrits, 7911, 7938))
           val tag = tryte.substring(2592, 2619)
-          Some(TrxModel(generatedHash
-            , sigFragments
-            , address
-            , value
-            , obsoleteTag
-            , timestamp
-            , currentIdx
-            , lastIdx
-            , bundle
-            , trunkTrx
-            , branchTrx
-            , nonce
-            , null
-            , attachmentTs
-            , tag
-            , attachmentTsLower
-            , attachmentTsUpper))
+          Some(TrxModel(
+            hash = generatedHash
+            , signatureFragments = sigFragments
+            , address = address
+            , value = value
+            , obsoleteTag = obsoleteTag
+            , timestamp = timestamp
+            , currentIndex = currentIdx
+            , lastIndex = lastIdx
+            , bundle = bundle
+            , trunkTransaction = trunkTrx
+            , branchTransaction = branchTrx
+            , nonce = nonce
+            , attachmentTimestamp = attachmentTs
+            , tag = tag
+            , attachmentTimestampLowerBound = attachmentTsLower
+            , attachmentTimestampUpperBound = attachmentTsUpper))
         }
         else {
           None
