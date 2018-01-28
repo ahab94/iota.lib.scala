@@ -11,7 +11,7 @@ import sota.utils.Constants._
   * @author hamza
   **/
 
-class InputValidator {
+object InputValidator {
 
   /**
     * Determines whether the specified string is an address.
@@ -87,7 +87,7 @@ class InputValidator {
     **/
 
   // TODO need to verify its working
-  def isArrayOfTrytes(trytes: List[String]): Boolean = {
+  def isListOfTrytes(trytes: List[String]): Boolean = {
     val checkBoolen = trytes.exists(!isTrytes(_, 2673))
     !checkBoolen
   }
@@ -98,11 +98,11 @@ class InputValidator {
     * @param hashes The hashes array to validate.
     * @return <code>true</code> the specified array contains only valid hashes; otherwise, <code>false</code>.
     **/
-  def isArrayOfHashes(hashes: List[String]): Boolean = {
-    if(hashes.nonEmpty){
-      if (hashes.exists(hash => (hash.length == 90 && !isTrytes(hash, 90)) || (!isTrytes(hash, 81)) )) false
+  def isListOfHashes(hashes: List[String]): Boolean = {
+    if (hashes.nonEmpty) {
+      if (hashes.exists(hash => (hash.length == 90 && !isTrytes(hash, 90)) || (!isTrytes(hash, 81)))) false
       else true
-    }else false
+    } else false
   }
 
   /**
@@ -120,7 +120,7 @@ class InputValidator {
     * @return <code>true</code> if the specified hashes are valid; otherwise, <code>false</code>.
     **/
   def isHashes(hashes: List[String]): Boolean = {
-    if(hashes.exists(!isTrytes(_ , 81)))false
+    if (hashes.exists(!isTrytes(_, 81))) false
     else true
   }
 
@@ -146,12 +146,12 @@ class InputValidator {
     * @return <code>true</code> if the specified transfer is valid; otherwise, <code>false</code>>.
     **/
   def isValidTransfer(transfer: Transfer): Boolean = {
-    if (transfer == null)  false
-    else if (!isAddress(transfer.address))  false
+    if (transfer == null) false
+    else if (!isAddress(transfer.address)) false
     // Check if message is correct trytes encoded of any length
-    else if (transfer.message == null || !isTrytes(transfer.message, transfer.message.length))  false
+    else if (transfer.message == null || !isTrytes(transfer.message, transfer.message.length)) false
     // Check if tag is correct trytes encoded and not longer than 27 trytes
-    else if (transfer.tag == null || !isTrytes(transfer.tag, transfer.tag.length) || transfer.tag.length > Constants.TAG_LENGTH)  false
+    else if (transfer.tag == null || !isTrytes(transfer.tag, transfer.tag.length) || transfer.tag.length > Constants.TAG_LENGTH) false
     else true
   }
 
@@ -161,7 +161,7 @@ class InputValidator {
     * @param trytes The trytes.
     * @return <code>true</code> if the specified trytes are valid; otherwise, <code>false</code>.
     **/
-  def isArrayOfAttachedTrytes(trytes: Array[String]): Boolean = {
+  def isListOfAttachedTrytes(trytes: List[String]): Boolean = {
     for (tryteValue <- trytes) { // Check if correct 2673 trytes
       if (!isTrytes(tryteValue, 2673)) return false
       val lastTrytes = tryteValue.substring(2673 - (3 * 81))

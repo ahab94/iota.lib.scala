@@ -1,11 +1,13 @@
 package sota.apis
 
-import com.softwaremill.sttp.{Id, Request, SttpBackend, Uri}
-import jota.utils.Constants._
-import jota.utils.{Checksum, InputValidator}
+import com.softwaremill.sttp.{HttpURLConnectionBackend, Id, Request, SttpBackend, Uri}
+//TODO:replace with sota
+import jota.utils.Checksum
 import sota.dto.request._
 import sota.dto.response._
 import sota.error.ArgumentException
+import sota.utils.Constants._
+import sota.utils.InputValidator
 
 /**
   * This class provides access to the Iota core API
@@ -16,12 +18,12 @@ case class IotaClientConfig(protocol: String = "http", host: String = "localhost
   val iriUrl: Uri = Uri(protocol, host, port)
 }
 
-class IotaAPICore(config: IotaClientConfig,
-                  implicit val apiBackend: SttpBackend[Id, Nothing]) {
+class IotaAPICore(config: IotaClientConfig, customApiBackend: Option[SttpBackend[Id, Nothing]] = None) {
 
-  val X_IOTA_API_VERSION_HEADER: Map[String, String] = Map("X-IOTA-API-Version" -> "1")
-  val uri: Uri = config.iriUrl
-  val service: APIService = new APIService(uri)
+  private val apiBackend: SttpBackend[Id, Nothing] = customApiBackend.getOrElse(HttpURLConnectionBackend())
+  private val X_IOTA_API_VERSION_HEADER: Map[String, String] = Map("X-IOTA-API-Version" -> "1")
+  private val uri: Uri = config.iriUrl
+  private val service: APIService = new APIService(uri)
 
   def getNodeInfo: GetNodeInfoResponse = {
     val getNodeInfoRequest = service.getNodeInfoRequest(IotaCommandRequest(IotaAPICommands.GET_NODE_INFO))
@@ -46,7 +48,6 @@ class IotaAPICore(config: IotaClientConfig,
 
   def getTips: GetTipsResponse = {
     val getTipsRequest = service.getTipsRequest(IotaCommandRequest(IotaAPICommands.GET_TIPS))
-    val response = apiBackend.send(getTipsRequest)
     executeRequest(getTipsRequest)
   }
 
@@ -62,6 +63,10 @@ class IotaAPICore(config: IotaClientConfig,
     findTransactions(null, null, null, bundles)
   }
 
+  def findTransactionsByApprovees(approvees: List[String]): FindTransactionResponse = {
+    findTransactions(null, null, approvees, null)
+  }
+
   def findTransactions(addresses: List[String], tags: List[String], approvees: List[String], bundles: List[String])
   : FindTransactionResponse = {
     val findTransactionsRequest = service.findTransactionsRequest(IotaFindTransactionsRequest(bundles, addresses
@@ -69,8 +74,22 @@ class IotaAPICore(config: IotaClientConfig,
     executeRequest(findTransactionsRequest)
   }
 
-  def findTransactionsByApprovees(approvees: List[String]): FindTransactionResponse = {
-    findTransactions(null, null, approvees, null)
+  def executeRequest[T](request: Request[T, Nothing]): T = {
+    val requestWithHeaders = request.headers(X_IOTA_API_VERSION_HEADER)
+    val response = apiBackend.send(requestWithHeaders)
+    response.body match {
+      case Right(body) => body
+      case Left(error) => throw exceptionHelper(error, response.code)
+    }
+  }
+
+  def exceptionHelper(msg: String, code: Int): Throwable = {
+    code match {
+      case 400 => new ArgumentException(msg)
+      case 401 => new IllegalAccessError("400 " + msg)
+      case 500 => new IllegalAccessError("500 " + msg)
+      case _ => new Exception(msg)
+    }
   }
 
   def findTransactionsByDigests(digests: List[String]): FindTransactionResponse = {
@@ -78,10 +97,9 @@ class IotaAPICore(config: IotaClientConfig,
   }
 
   def getInclusionStates(transactions: List[String], tips: List[String]): GetInclusionStateResponse = {
-    import jota.utils.InputValidator
-    if (!InputValidator.isArrayOfHashes(transactions.toArray))
+    if (!InputValidator.isListOfHashes(transactions))
       throw new ArgumentException(INVALID_HASHES_INPUT_ERROR)
-    if (!InputValidator.isArrayOfHashes(tips.toArray))
+    if (!InputValidator.isListOfHashes(tips))
       throw new ArgumentException(INVALID_HASHES_INPUT_ERROR)
     val getInclusionStatesRequest = service.getInclusionStatesRequest(IotaGetInclusionStateRequest(transactions, tips
       , IotaAPICommands.GET_INCLUSIONS_STATES))
@@ -89,7 +107,7 @@ class IotaAPICore(config: IotaClientConfig,
   }
 
   def getTrytes(hashes: List[String]): GetTrytesResponse = {
-    if (!InputValidator.isArrayOfHashes(hashes.toArray))
+    if (!InputValidator.isListOfHashes(hashes))
       throw new ArgumentException(INVALID_HASHES_INPUT_ERROR)
     val getTrytesRequest = service.getTrytesRequest(IotaGetTrytesRequest(hashes, IotaAPICommands.GET_TRYTES))
     executeRequest(getTrytesRequest)
@@ -111,24 +129,6 @@ class IotaAPICore(config: IotaClientConfig,
     executeRequest(getBalancesRequest)
   }
 
-  def executeRequest[T](request: Request[T, Nothing]): T = {
-    val requestWithHeaders = request.headers(X_IOTA_API_VERSION_HEADER)
-    val response = apiBackend.send(requestWithHeaders)
-    response.body match {
-      case Right(body) => body
-      case Left(error) => throw exceptionHelper(error, response.code)
-    }
-  }
-
-  def exceptionHelper(msg: String, code: Int): Throwable = {
-    code match {
-      case 400 => new ArgumentException(msg)
-      case 401 => new IllegalAccessError("400 " + msg)
-      case 500 => new IllegalAccessError("500 " + msg)
-      case _ => new Exception(msg)
-    }
-  }
-
   def attachToTangle(trunkTransaction: String, branchTransaction: String, minWeightMagnitude: Integer, trytes: List[String])
   : GetAttachToTangleResponse = {
     //TODO:implement logic
@@ -144,7 +144,7 @@ class IotaAPICore(config: IotaClientConfig,
   }
 
   def broadcastTransactions(trytes: List[String]): BroadcastTransactionsResponse = {
-    if (!InputValidator.isArrayOfAttachedTrytes(trytes.toArray))
+    if (!InputValidator.isListOfAttachedTrytes(trytes))
       throw new ArgumentException(INVALID_ATTACHED_TRYTES_INPUT_ERROR)
     val broadcastTransactionsRequest = service
       .broadcastTransactionsRequest(IotaBroadcastTransactionRequest(trytes, IotaAPICommands.BROADCAST_TRANSACTIONS))
@@ -164,5 +164,7 @@ class IotaAPICore(config: IotaClientConfig,
   def getPort: String = config.protocol
 
   def getURI: Uri = config.iriUrl
+
+  def close(): Unit = apiBackend.close()
 
 }
