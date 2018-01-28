@@ -1,6 +1,5 @@
 package sota
 
-import sota.apis.{IotaAPICore, IotaClientConfig}
 import sota.dto.response.StoreTransactionsResponse
 import sota.error.ArgumentException
 import sota.utils.Constants._

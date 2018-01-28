@@ -1,4 +1,4 @@
-package sota.apis
+package sota
 
 import com.softwaremill.sttp.{HttpURLConnectionBackend, Id, Request, SttpBackend, Uri}
 //TODO:replace with sota

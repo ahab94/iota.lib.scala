@@ -1,5 +1,4 @@
-package sota.apis
-
+package sota
 
 import com.softwaremill.sttp._
 import com.softwaremill.sttp.json4s._
