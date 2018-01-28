@@ -41,8 +41,8 @@ class IotaAPICore(config: IotaClientConfig, customApiBackend: Option[SttpBackend
   }
 
   def removeNeighbors(uris: List[String]): RemoveNeighborsResponse = {
-    val removeNeighborsRequest = service.removeNeighborsRequest(IotaNeighborsRequest(uris,
-      IotaAPICommands.REMOVE_NEIGHBORS))
+    val removeNeighborsRequest = service.removeNeighborsRequest(IotaNeighborsRequest(uris
+      , IotaAPICommands.REMOVE_NEIGHBORS))
     executeRequest(removeNeighborsRequest)
   }
 
@@ -115,7 +115,8 @@ class IotaAPICore(config: IotaClientConfig, customApiBackend: Option[SttpBackend
 
   def getTransactionsToApprove(depth: Integer): GetTransactionsToApproveResponse = {
     val getTransactionsToApproveRequest = service
-      .getTransactionsToApproveRequest(IotaGetTransactionsToApproveRequest(depth, IotaAPICommands.GET_TRANSACTIONS_TO_APPROVE))
+      .getTransactionsToApproveRequest(IotaGetTransactionsToApproveRequest(depth
+        , IotaAPICommands.GET_TRANSACTIONS_TO_APPROVE))
     executeRequest(getTransactionsToApproveRequest)
   }
 
@@ -129,7 +130,8 @@ class IotaAPICore(config: IotaClientConfig, customApiBackend: Option[SttpBackend
     executeRequest(getBalancesRequest)
   }
 
-  def attachToTangle(trunkTransaction: String, branchTransaction: String, minWeightMagnitude: Integer, trytes: List[String])
+  def attachToTangle(trunkTransaction: String, branchTransaction: String, minWeightMagnitude: Integer
+                     , trytes: List[String])
   : GetAttachToTangleResponse = {
     //TODO:implement logic
     val getAttachToTangleRequest = service.attachToTangleRequest(IotaAttachToTangleRequest(trunkTransaction
