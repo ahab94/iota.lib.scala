@@ -6,7 +6,7 @@ script:
    - sbt ++$TRAVIS_SCALA_VERSION clean coverage test coverageReport
 
 after_success:
-   - bash <(curl -s https://codecov.io/bash)
+   - bash <(curl -s https://codecov.io/bash) -t cf04b75f-69a5-459d-9a78-dcfffc00249f
 
 branches:
   only:
