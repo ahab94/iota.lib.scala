@@ -143,9 +143,19 @@ class IotaAPICore(config: IotaClientConfig,
     executeRequest(getInterruptAttachToTangleRequest)
   }
 
-  def broadcastTransactions(trytes: List[String]): BroadcastTransactionsResponse = ???
+  def broadcastTransactions(trytes: List[String]): BroadcastTransactionsResponse = {
+    if (!InputValidator.isArrayOfAttachedTrytes(trytes.toArray))
+      throw new ArgumentException(INVALID_ATTACHED_TRYTES_INPUT_ERROR)
+    val broadcastTransactionsRequest = service
+      .broadcastTransactionsRequest(IotaBroadcastTransactionRequest(trytes, IotaAPICommands.BROADCAST_TRANSACTIONS))
+    executeRequest(broadcastTransactionsRequest)
+  }
 
-  def storeTransactions(trytes: List[String]): StoreTransactionsResponse = ???
+  def storeTransactions(trytes: List[String]): StoreTransactionsResponse = {
+    val storeTransactionsRequest = service
+      .storeTransactionsRequest(IotaStoreTransactionsRequest(trytes, IotaAPICommands.STORE_TRANSACTIONS))
+    executeRequest(storeTransactionsRequest)
+  }
 
   def getProtocol: String = config.protocol
 
