@@ -70,7 +70,7 @@ class IotaAPICore(config: IotaClientConfig, customApiBackend: Option[SttpBackend
   def findTransactions(addresses: List[String], tags: List[String], approvees: List[String], bundles: List[String])
   : FindTransactionResponse = {
     val findTransactionsRequest = service.findTransactionsRequest(IotaFindTransactionsRequest(bundles, addresses
-      , tags, approvees, IotaAPICommands.FIND_TRANSACTIONS))
+      , tags, approvees))
     executeRequest(findTransactionsRequest)
   }
 
@@ -101,22 +101,20 @@ class IotaAPICore(config: IotaClientConfig, customApiBackend: Option[SttpBackend
       throw new ArgumentException(INVALID_HASHES_INPUT_ERROR)
     if (!InputValidator.isListOfHashes(tips))
       throw new ArgumentException(INVALID_HASHES_INPUT_ERROR)
-    val getInclusionStatesRequest = service.getInclusionStatesRequest(IotaGetInclusionStateRequest(transactions, tips
-      , IotaAPICommands.GET_INCLUSIONS_STATES))
+    val getInclusionStatesRequest = service.getInclusionStatesRequest(IotaGetInclusionStateRequest(transactions, tips))
     executeRequest(getInclusionStatesRequest)
   }
 
   def getTrytes(hashes: List[String]): GetTrytesResponse = {
     if (!InputValidator.isListOfHashes(hashes))
       throw new ArgumentException(INVALID_HASHES_INPUT_ERROR)
-    val getTrytesRequest = service.getTrytesRequest(IotaGetTrytesRequest(hashes, IotaAPICommands.GET_TRYTES))
+    val getTrytesRequest = service.getTrytesRequest(IotaGetTrytesRequest(hashes))
     executeRequest(getTrytesRequest)
   }
 
   def getTransactionsToApprove(depth: Integer): GetTransactionsToApproveResponse = {
     val getTransactionsToApproveRequest = service
-      .getTransactionsToApproveRequest(IotaGetTransactionsToApproveRequest(depth
-        , IotaAPICommands.GET_TRANSACTIONS_TO_APPROVE))
+      .getTransactionsToApproveRequest(IotaGetTransactionsToApproveRequest(depth))
     executeRequest(getTransactionsToApproveRequest)
   }
 
@@ -125,8 +123,7 @@ class IotaAPICore(config: IotaClientConfig, customApiBackend: Option[SttpBackend
       address =>
         Checksum.removeChecksum(address)
     }
-    val getBalancesRequest = service.getBalancesRequest(IotaGetBalancesRequest(addressesWithoutChecksum, threshold
-      , IotaAPICommands.GET_BALANCES))
+    val getBalancesRequest = service.getBalancesRequest(IotaGetBalancesRequest(addressesWithoutChecksum, threshold))
     executeRequest(getBalancesRequest)
   }
 
@@ -135,7 +132,7 @@ class IotaAPICore(config: IotaClientConfig, customApiBackend: Option[SttpBackend
   : GetAttachToTangleResponse = {
     //TODO:implement logic
     val getAttachToTangleRequest = service.attachToTangleRequest(IotaAttachToTangleRequest(trunkTransaction
-      , branchTransaction, minWeightMagnitude, trytes, IotaAPICommands.ATTACH_TO_TANGLE))
+      , branchTransaction, minWeightMagnitude, trytes))
     executeRequest(getAttachToTangleRequest)
   }
 
@@ -149,13 +146,13 @@ class IotaAPICore(config: IotaClientConfig, customApiBackend: Option[SttpBackend
     if (!InputValidator.isListOfAttachedTrytes(trytes))
       throw new ArgumentException(INVALID_ATTACHED_TRYTES_INPUT_ERROR)
     val broadcastTransactionsRequest = service
-      .broadcastTransactionsRequest(IotaBroadcastTransactionRequest(trytes, IotaAPICommands.BROADCAST_TRANSACTIONS))
+      .broadcastTransactionsRequest(IotaBroadcastTransactionRequest(trytes))
     executeRequest(broadcastTransactionsRequest)
   }
 
   def storeTransactions(trytes: List[String]): StoreTransactionsResponse = {
     val storeTransactionsRequest = service
-      .storeTransactionsRequest(IotaStoreTransactionsRequest(trytes, IotaAPICommands.STORE_TRANSACTIONS))
+      .storeTransactionsRequest(IotaStoreTransactionsRequest(trytes))
     executeRequest(storeTransactionsRequest)
   }
 
