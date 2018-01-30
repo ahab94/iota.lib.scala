@@ -17,6 +17,7 @@ import scala.util.control.NonFatal
 class IotaClient(config: IotaClientConfig = IotaClientConfig())
   extends IotaAPICore(config) {
 
+  logger.info("SOTA client spawned for uri:{}", config.iriUrl)
 
   /**
     * Wrapper function that broadcasts and stores the specified trytes.

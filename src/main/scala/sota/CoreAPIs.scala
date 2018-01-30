@@ -1,6 +1,7 @@
 package sota
 
-import com.softwaremill.sttp.{HttpURLConnectionBackend, Id, Request, SttpBackend, Uri}
+import com.softwaremill.sttp.{HttpURLConnectionBackend, Id, Request, Response, SttpBackend, Uri}
+import com.typesafe.scalalogging.LazyLogging
 //TODO:replace with sota
 import jota.utils.Checksum
 import sota.dto.request._
@@ -18,7 +19,8 @@ case class IotaClientConfig(protocol: String = "http", host: String = "localhost
   val iriUrl: Uri = Uri(protocol, host, port)
 }
 
-class IotaAPICore(config: IotaClientConfig, customApiBackend: Option[SttpBackend[Id, Nothing]] = None) {
+class IotaAPICore(config: IotaClientConfig, customApiBackend: Option[SttpBackend[Id, Nothing]] = None)
+  extends LazyLogging {
 
   private val apiBackend: SttpBackend[Id, Nothing] = customApiBackend.getOrElse(HttpURLConnectionBackend())
   private val X_IOTA_API_VERSION_HEADER: Map[String, String] = Map("X-IOTA-API-Version" -> "1")
@@ -76,20 +78,24 @@ class IotaAPICore(config: IotaClientConfig, customApiBackend: Option[SttpBackend
 
   def executeRequest[T](request: Request[T, Nothing]): T = {
     val requestWithHeaders = request.headers(X_IOTA_API_VERSION_HEADER)
+    logger.debug(s"Executing request at uri: {} with body: {}", requestWithHeaders.uri, requestWithHeaders.body)
     val response = apiBackend.send(requestWithHeaders)
     response.body match {
       case Right(body) => body
-      case Left(error) => throw exceptionHelper(error, response.code)
+      case Left(error) => throw exceptionHelper(requestWithHeaders, response, error)
     }
   }
 
-  def exceptionHelper(msg: String, code: Int): Throwable = {
-    code match {
-      case 400 => new ArgumentException(msg)
-      case 401 => new IllegalAccessError("400 " + msg)
-      case 500 => new IllegalAccessError("500 " + msg)
-      case _ => new Exception(msg)
+  def exceptionHelper[T](request: Request[T, Nothing], response: Response[T], error: String): Throwable = {
+    logger.error(s"Request: {} failed with Response: {} with following message: {}", request, response, error)
+    val code = response.code
+    val exception = code match {
+      case 400 => new ArgumentException(error)
+      case 401 => new IllegalAccessError("400 " + error)
+      case 500 => new IllegalAccessError("500 " + error)
+      case _ => new Exception(error)
     }
+    exception
   }
 
   def findTransactionsByDigests(digests: List[String]): FindTransactionResponse = {
