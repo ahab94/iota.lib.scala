@@ -78,7 +78,7 @@ class IotaAPICore(config: IotaClientConfig, customApiBackend: Option[SttpBackend
 
   def executeRequest[T](request: Request[T, Nothing]): T = {
     val requestWithHeaders = request.headers(X_IOTA_API_VERSION_HEADER)
-    logger.debug(s"Executing request at uri: {} with body: {}", requestWithHeaders.uri, requestWithHeaders.body)
+    logger.info(s"Executing request at uri: {} with body: {}", requestWithHeaders.uri, requestWithHeaders.body)
     val response = apiBackend.send(requestWithHeaders)
     response.body match {
       case Right(body) => body
