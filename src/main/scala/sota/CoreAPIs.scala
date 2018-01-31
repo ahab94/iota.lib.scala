@@ -2,6 +2,8 @@ package sota
 
 import com.softwaremill.sttp.{HttpURLConnectionBackend, Id, Request, Response, SttpBackend, Uri}
 import com.typesafe.scalalogging.LazyLogging
+
+import scala.util.control.NonFatal
 //TODO:replace with sota
 import jota.utils.Checksum
 import sota.dto.request._
@@ -79,10 +81,16 @@ class IotaAPICore(config: IotaClientConfig, customApiBackend: Option[SttpBackend
   def executeRequest[T](request: Request[T, Nothing]): T = {
     val requestWithHeaders = request.headers(X_IOTA_API_VERSION_HEADER)
     logger.info(s"Executing request at uri: {} with body: {}", requestWithHeaders.uri, requestWithHeaders.body)
-    val response = apiBackend.send(requestWithHeaders)
-    response.body match {
-      case Right(body) => body
-      case Left(error) => throw exceptionHelper(requestWithHeaders, response, error)
+    try {
+      val response = apiBackend.send(requestWithHeaders)
+      response.body match {
+        case Right(body) => body
+        case Left(error) => throw exceptionHelper(requestWithHeaders, response, error)
+      }
+    } catch {
+      case NonFatal(ex) =>
+        logger.error(s"Request failed because: {}", ex.getMessage)
+        throw ex
     }
   }
 
