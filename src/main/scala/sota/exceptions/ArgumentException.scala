@@ -1,4 +1,4 @@
-package sota.error
+package sota.exceptions
 
 class ArgumentException(message: String, exception: Throwable) extends BaseException(message: String, exception: Throwable) {
 
