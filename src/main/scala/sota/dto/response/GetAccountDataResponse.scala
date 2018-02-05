@@ -1,11 +1,11 @@
 package sota.dto.response
 
-import sota.model.{Bundle, Input}
+import sota.models.{Bundle, Input}
 
 /**
   * Response of api request 'getAccountData'.
   **/
-class GetAccountDataResponse(addresses: List[String],
+case class GetAccountDataResponse(addresses: List[String],
                              transferBundle: List[Bundle],
                              inputs: List[Input],
                              balance: Long,

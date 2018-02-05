@@ -1,4 +1,4 @@
-package sota.model
+package sota.models
 
 case class Transfer(
                      timestamp: String,

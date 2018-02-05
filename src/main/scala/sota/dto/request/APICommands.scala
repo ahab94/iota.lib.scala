@@ -1,6 +1,6 @@
 package sota.dto.request
 
-object IotaAPICommands {
+object APICommands {
   val GET_NODE_INFO = "getNodeInfo"
   val GET_NEIGHBORS = "getNeighbors"
   val ADD_NEIGHBORS = "addNeighbors"

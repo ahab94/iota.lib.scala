@@ -1,8 +1,8 @@
 package sota.utils
 
 import org.apache.commons.lang3.math.NumberUtils
-import sota.error.ArgumentException
-import sota.model.Transfer
+import sota.exceptions.ArgumentException
+import sota.models.Transfer
 import sota.utils.Constants._
 
 /**

@@ -1,4 +1,4 @@
-package sota.model
+package sota.models
 
 import java.util
 

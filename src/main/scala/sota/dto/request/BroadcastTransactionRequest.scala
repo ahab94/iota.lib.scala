@@ -5,6 +5,6 @@ package sota.dto.request
   *
   * Broadcast a list of transactions to all neighbors. The input trytes for this call are provided by attachToTangle
   **/
-case class IotaBroadcastTransactionRequest(trytes: List[String],
-                                           command: String = IotaAPICommands.BROADCAST_TRANSACTIONS)
+case class BroadcastTransactionRequest(trytes: List[String],
+                                       command: String = APICommands.BROADCAST_TRANSACTIONS)
 

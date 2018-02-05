@@ -1,4 +1,4 @@
-package sota.model
+package sota.models
 
 /**
   * This class represents a Bundle, a set of transactions.

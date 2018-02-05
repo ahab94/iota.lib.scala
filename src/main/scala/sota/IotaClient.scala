@@ -1,7 +1,7 @@
 package sota
 
 import sota.dto.response.StoreTransactionsResponse
-import sota.error.ArgumentException
+import sota.exceptions.ArgumentException
 import sota.utils.Constants._
 import sota.utils.InputValidator
 

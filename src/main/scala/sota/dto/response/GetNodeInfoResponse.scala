@@ -1,7 +1,7 @@
 package sota.dto.response
 
 /**
-  * Response of {@link jota.dto.request.IotaNeighborsRequest}.
+  * Response of {@link jota.dto.request.NeighborsRequest}.
   **/
 case class GetNodeInfoResponse(
                                 appName: String,
