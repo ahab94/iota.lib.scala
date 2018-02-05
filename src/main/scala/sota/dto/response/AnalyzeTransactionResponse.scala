@@ -1,6 +1,6 @@
 package sota.dto.response
 
-import sota.model.Transaction
+import sota.models.Transaction
 
 /**
   * Response of {@link sota.dto.request.IotaGetBalancesRequest}.

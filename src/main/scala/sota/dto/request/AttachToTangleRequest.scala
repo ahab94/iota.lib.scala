@@ -5,10 +5,10 @@ package sota.dto.request
   *
   * It is used to attach trytes to the tangle.
   **/
-case class IotaAttachToTangleRequest(
+case class AttachToTangleRequest(
                                       trunkTransaction: String,
                                       branchTransaction: String,
                                       minWeightMagnitude: Integer,
                                       trytes: List[String],
-                                      command: String = IotaAPICommands.ATTACH_TO_TANGLE
+                                      command: String = APICommands.ATTACH_TO_TANGLE
                                     )
