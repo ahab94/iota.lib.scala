@@ -1,5 +1,6 @@
 package sota
 
+import com.softwaremill.sttp.{Id, SttpBackend}
 import sota.dto.response.StoreTransactionsResponse
 import sota.exceptions.ArgumentException
 import sota.utils.Constants._
@@ -14,7 +15,7 @@ import scala.util.control.NonFatal
   */
 
 
-class IotaClient(config: IotaClientConfig = IotaClientConfig())
+class IotaClient(config: IotaClientConfig = IotaClientConfig(), customApiBackend: Option[SttpBackend[Id, Nothing]] = None)
   extends IotaAPICore(config) {
 
   logger.info("SOTA client spawned for uri:{}", config.iriUrl)
