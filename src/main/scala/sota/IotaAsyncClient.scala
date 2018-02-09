@@ -5,11 +5,11 @@ import sota.exceptions.ArgumentException
 import sota.utils.Constants.INVALID_TRYTES_INPUT_ERROR
 import sota.utils.InputValidator
 
-import scala.concurrent.{ExecutionContextExecutor, Future}
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
 class IotaAsyncClient(config: IotaClientConfig = IotaClientConfig())
-                     (implicit ec: ExecutionContextExecutor) extends AsyncCoreAPIs(config) {
+                     (implicit exec: ExecutionContext) extends AsyncCoreAPIs(config) {
 
   logger.info("SOTA async client spawned for uri:{}", config.iriUrl)
 

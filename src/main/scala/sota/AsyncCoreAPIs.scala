@@ -10,11 +10,11 @@ import sota.exceptions.ArgumentException
 import sota.utils.Constants.{INVALID_ATTACHED_TRYTES_INPUT_ERROR, INVALID_HASHES_INPUT_ERROR}
 import sota.utils.{APIUtilities, InputValidator}
 
-import scala.concurrent.{ExecutionContextExecutor, Future}
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
 class AsyncCoreAPIs(config: IotaClientConfig, asyncApiBackend: Option[SttpBackend[Future, Nothing]] = None)
-                   (implicit ec: ExecutionContextExecutor) extends LazyLogging {
+                   (implicit exec: ExecutionContext) extends LazyLogging {
 
   private val apiBackend: SttpBackend[Future, Nothing] = asyncApiBackend.getOrElse(AsyncHttpClientFutureBackend())
   private val X_IOTA_API_VERSION_HEADER: Map[String, String] = Map("X-IOTA-API-Version" -> "1")
