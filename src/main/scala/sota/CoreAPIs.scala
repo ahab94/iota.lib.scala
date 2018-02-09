@@ -1,13 +1,13 @@
 package sota
 
-import com.softwaremill.sttp.{HttpURLConnectionBackend, Id, Request, Response, SttpBackend, Uri}
+import com.softwaremill.sttp.{HttpURLConnectionBackend, Id, Request, SttpBackend, Uri}
 import com.typesafe.scalalogging.LazyLogging
 import jota.utils.Checksum
 import sota.dto.request._
 import sota.dto.response._
 import sota.exceptions.ArgumentException
 import sota.utils.Constants._
-import sota.utils.InputValidator
+import sota.utils.{APIUtilities, InputValidator}
 
 import scala.util.control.NonFatal
 
@@ -84,7 +84,7 @@ class IotaAPICore(config: IotaClientConfig, customApiBackend: Option[SttpBackend
       val response = apiBackend.send(requestWithHeaders)
       response.body match {
         case Right(body) => body
-        case Left(error) => throw exceptionHelper(requestWithHeaders, response, error)
+        case Left(error) => throw APIUtilities.exceptionHelper(requestWithHeaders, response, error)
       }
     } catch {
       case NonFatal(ex) =>
@@ -93,17 +93,6 @@ class IotaAPICore(config: IotaClientConfig, customApiBackend: Option[SttpBackend
     }
   }
 
-  def exceptionHelper[T](request: Request[T, Nothing], response: Response[T], error: String): Throwable = {
-    logger.error(s"Request: {} failed with Response: {} with following message: {}", request, response, error)
-    val code = response.code
-    val exception = code match {
-      case 400 => new ArgumentException(error)
-      case 401 => new IllegalAccessError("400 " + error)
-      case 500 => new IllegalAccessError("500 " + error)
-      case _ => new Exception(error)
-    }
-    exception
-  }
 
   def findTransactionsByDigests(digests: List[String]): FindTransactionResponse = {
     findTransactions(null, digests, null, null)

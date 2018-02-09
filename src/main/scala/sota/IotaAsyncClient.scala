@@ -11,7 +11,7 @@ import scala.util.control.NonFatal
 class IotaAsyncClient(config: IotaClientConfig = IotaClientConfig())
                      (implicit ec: ExecutionContextExecutor) extends AsyncCoreAPIs(config) {
 
-  logger.info("SOTA client spawned for uri:{}", config.iriUrl)
+  logger.info("SOTA async client spawned for uri:{}", config.iriUrl)
 
   /**
     * Wrapper function that broadcasts and stores the specified trytes.

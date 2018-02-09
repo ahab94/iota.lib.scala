@@ -1,14 +1,14 @@
 package sota
 
 import com.softwaremill.sttp.asynchttpclient.future.AsyncHttpClientFutureBackend
-import com.softwaremill.sttp.{Request, Response, SttpBackend, Uri}
+import com.softwaremill.sttp.{Request, SttpBackend, Uri}
 import com.typesafe.scalalogging.LazyLogging
 import jota.utils.Checksum
 import sota.dto.request._
 import sota.dto.response._
 import sota.exceptions.ArgumentException
 import sota.utils.Constants.{INVALID_ATTACHED_TRYTES_INPUT_ERROR, INVALID_HASHES_INPUT_ERROR}
-import sota.utils.InputValidator
+import sota.utils.{APIUtilities, InputValidator}
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.util.control.NonFatal
@@ -79,7 +79,7 @@ class AsyncCoreAPIs(config: IotaClientConfig, asyncApiBackend: Option[SttpBacken
         resp =>
           resp.body match {
             case Right(body) => body
-            case Left(error) => throw exceptionHelper(requestWithHeaders, resp, error)
+            case Left(error) => throw APIUtilities.exceptionHelper(requestWithHeaders, resp, error)
           }
       }
     }
@@ -90,17 +90,6 @@ class AsyncCoreAPIs(config: IotaClientConfig, asyncApiBackend: Option[SttpBacken
     }
   }
 
-  def exceptionHelper[T](request: Request[T, Nothing], response: Response[T], error: String): Throwable = {
-    logger.error(s"Request: {} failed with Response: {} with following message: {}", request, response, error)
-    val code = response.code
-    val exception = code match {
-      case 400 => new ArgumentException(error)
-      case 401 => new IllegalAccessError("400 " + error)
-      case 500 => new IllegalAccessError("500 " + error)
-      case _ => new Exception(error)
-    }
-    exception
-  }
 
   def findTransactionsByDigests(digests: List[String]): Future[FindTransactionResponse] = {
     findTransactions(null, digests, null, null)
