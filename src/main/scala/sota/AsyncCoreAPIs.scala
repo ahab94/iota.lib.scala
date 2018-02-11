@@ -1,60 +1,53 @@
 package sota
 
-import com.softwaremill.sttp.{HttpURLConnectionBackend, Id, Request, SttpBackend, Uri}
+import com.softwaremill.sttp.asynchttpclient.future.AsyncHttpClientFutureBackend
+import com.softwaremill.sttp.{Request, SttpBackend, Uri}
 import com.typesafe.scalalogging.LazyLogging
 import jota.utils.Checksum
 import sota.dto.request._
 import sota.dto.response._
 import sota.exceptions.ArgumentException
-import sota.utils.Constants._
+import sota.utils.Constants.{INVALID_ATTACHED_TRYTES_INPUT_ERROR, INVALID_HASHES_INPUT_ERROR}
 import sota.utils.{APIUtilities, InputValidator}
 
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
-/**
-  * This class provides access to the Iota core API
-  *
-  * @author @ahab94
-  */
-case class IotaClientConfig(protocol: String = "http", host: String = "localhost", port: Int = 14265) {
-  val iriUrl: Uri = Uri(protocol, host, port)
-}
+class AsyncCoreAPIs(config: IotaClientConfig, asyncApiBackend: Option[SttpBackend[Future, Nothing]] = None)
+                   (implicit exec: ExecutionContext) extends LazyLogging {
 
-class IotaAPICore(config: IotaClientConfig, customApiBackend: Option[SttpBackend[Id, Nothing]] = None)
-  extends LazyLogging {
-
-  private val apiBackend: SttpBackend[Id, Nothing] = customApiBackend.getOrElse(HttpURLConnectionBackend())
+  private val apiBackend: SttpBackend[Future, Nothing] = asyncApiBackend.getOrElse(AsyncHttpClientFutureBackend())
   private val X_IOTA_API_VERSION_HEADER: Map[String, String] = Map("X-IOTA-API-Version" -> "1")
   private val uri: Uri = config.iriUrl
   private val service: APIService = new APIService(uri)
 
-  def getNodeInfo: GetNodeInfoResponse = {
+  def getNodeInfo: Future[GetNodeInfoResponse] = {
     val getNodeInfoRequest = service.getNodeInfoRequest(CommandRequest(APICommands.GET_NODE_INFO))
     executeRequest(getNodeInfoRequest)
   }
 
-  def getNeighbors: GetNeighborsResponse = {
+  def getNeighbors: Future[GetNeighborsResponse] = {
     val getNeighborsRequest = service.getNeighborsRequest(CommandRequest(APICommands.GET_NEIGHBORS))
     executeRequest(getNeighborsRequest)
   }
 
-  def addNeighbors(uris: List[String]): AddNeighborsResponse = {
+  def addNeighbors(uris: List[String]): Future[AddNeighborsResponse] = {
     val addNeighborsRequest = service.addNeighborsRequest(NeighborsRequest(uris, APICommands.ADD_NEIGHBORS))
     executeRequest(addNeighborsRequest)
   }
 
-  def removeNeighbors(uris: List[String]): RemoveNeighborsResponse = {
+  def removeNeighbors(uris: List[String]): Future[RemoveNeighborsResponse] = {
     val removeNeighborsRequest = service.removeNeighborsRequest(NeighborsRequest(uris
       , APICommands.REMOVE_NEIGHBORS))
     executeRequest(removeNeighborsRequest)
   }
 
-  def getTips: GetTipsResponse = {
+  def getTips: Future[GetTipsResponse] = {
     val getTipsRequest = service.getTipsRequest(CommandRequest(APICommands.GET_TIPS))
     executeRequest(getTipsRequest)
   }
 
-  def findTransactionsByAddresses(addresses: List[String]): FindTransactionResponse = {
+  def findTransactionsByAddresses(addresses: List[String]): Future[FindTransactionResponse] = {
     val addressesWithoutChecksum = addresses.map {
       address =>
         Checksum.removeChecksum(address)
@@ -62,31 +55,35 @@ class IotaAPICore(config: IotaClientConfig, customApiBackend: Option[SttpBackend
     findTransactions(addressesWithoutChecksum, null, null, null)
   }
 
-  def findTransactionsByBundles(bundles: List[String]): FindTransactionResponse = {
+  def findTransactionsByBundles(bundles: List[String]): Future[FindTransactionResponse] = {
     findTransactions(null, null, null, bundles)
   }
 
-  def findTransactionsByApprovees(approvees: List[String]): FindTransactionResponse = {
+  def findTransactionsByApprovees(approvees: List[String]): Future[FindTransactionResponse] = {
     findTransactions(null, null, approvees, null)
   }
 
   def findTransactions(addresses: List[String], tags: List[String], approvees: List[String], bundles: List[String])
-  : FindTransactionResponse = {
+  : Future[FindTransactionResponse] = {
     val findTransactionsRequest = service.findTransactionsRequest(FindTransactionsRequest(bundles, addresses
       , tags, approvees))
     executeRequest(findTransactionsRequest)
   }
 
-  def executeRequest[T](request: Request[T, Nothing]): T = {
+  def executeRequest[T](request: Request[T, Nothing]): Future[T] = {
     val requestWithHeaders = request.headers(X_IOTA_API_VERSION_HEADER)
     logger.info(s"Executing request at uri: {} with body: {}", requestWithHeaders.uri, requestWithHeaders.body)
     try {
       val response = apiBackend.send(requestWithHeaders)
-      response.body match {
-        case Right(body) => body
-        case Left(error) => throw APIUtilities.exceptionHelper(requestWithHeaders, response, error)
+      response.map {
+        resp =>
+          resp.body match {
+            case Right(body) => body
+            case Left(error) => throw APIUtilities.exceptionHelper(requestWithHeaders, resp, error)
+          }
       }
-    } catch {
+    }
+    catch {
       case NonFatal(ex) =>
         logger.error(s"Request failed because: {}", ex.getMessage)
         throw ex
@@ -94,11 +91,11 @@ class IotaAPICore(config: IotaClientConfig, customApiBackend: Option[SttpBackend
   }
 
 
-  def findTransactionsByDigests(digests: List[String]): FindTransactionResponse = {
+  def findTransactionsByDigests(digests: List[String]): Future[FindTransactionResponse] = {
     findTransactions(null, digests, null, null)
   }
 
-  def getInclusionStates(transactions: List[String], tips: List[String]): GetInclusionStateResponse = {
+  def getInclusionStates(transactions: List[String], tips: List[String]): Future[GetInclusionStateResponse] = {
     if (!InputValidator.isListOfHashes(transactions))
       throw new ArgumentException(INVALID_HASHES_INPUT_ERROR)
     if (!InputValidator.isListOfHashes(tips))
@@ -107,20 +104,20 @@ class IotaAPICore(config: IotaClientConfig, customApiBackend: Option[SttpBackend
     executeRequest(getInclusionStatesRequest)
   }
 
-  def getTrytes(hashes: List[String]): GetTrytesResponse = {
+  def getTrytes(hashes: List[String]): Future[GetTrytesResponse] = {
     if (!InputValidator.isListOfHashes(hashes))
       throw new ArgumentException(INVALID_HASHES_INPUT_ERROR)
     val getTrytesRequest = service.getTrytesRequest(GetTrytesRequest(hashes))
     executeRequest(getTrytesRequest)
   }
 
-  def getTransactionsToApprove(depth: Integer): GetTransactionsToApproveResponse = {
+  def getTransactionsToApprove(depth: Integer): Future[GetTransactionsToApproveResponse] = {
     val getTransactionsToApproveRequest = service
       .getTransactionsToApproveRequest(GetTransactionsToApproveRequest(depth))
     executeRequest(getTransactionsToApproveRequest)
   }
 
-  def getBalances(threshold: Integer, addresses: List[String]): GetBalancesResponse = {
+  def getBalances(threshold: Integer, addresses: List[String]): Future[GetBalancesResponse] = {
     val addressesWithoutChecksum = addresses.map {
       address =>
         Checksum.removeChecksum(address)
@@ -131,20 +128,20 @@ class IotaAPICore(config: IotaClientConfig, customApiBackend: Option[SttpBackend
 
   def attachToTangle(trunkTransaction: String, branchTransaction: String, minWeightMagnitude: Integer
                      , trytes: List[String])
-  : GetAttachToTangleResponse = {
+  : Future[GetAttachToTangleResponse] = {
     //TODO:implement logic
     val getAttachToTangleRequest = service.attachToTangleRequest(AttachToTangleRequest(trunkTransaction
       , branchTransaction, minWeightMagnitude, trytes))
     executeRequest(getAttachToTangleRequest)
   }
 
-  def interruptAttachingToTangle: InterruptAttachingToTangleResponse = {
+  def interruptAttachingToTangle: Future[InterruptAttachingToTangleResponse] = {
     val getInterruptAttachToTangleRequest = service
       .interruptAttachingToTangleRequest(CommandRequest(APICommands.INTERRUPT_ATTACHING_TO_TANGLE))
     executeRequest(getInterruptAttachToTangleRequest)
   }
 
-  def broadcastTransactions(trytes: List[String]): BroadcastTransactionsResponse = {
+  def broadcastTransactions(trytes: List[String]): Future[BroadcastTransactionsResponse] = {
     if (!InputValidator.isListOfAttachedTrytes(trytes))
       throw new ArgumentException(INVALID_ATTACHED_TRYTES_INPUT_ERROR)
     val broadcastTransactionsRequest = service
@@ -152,7 +149,7 @@ class IotaAPICore(config: IotaClientConfig, customApiBackend: Option[SttpBackend
     executeRequest(broadcastTransactionsRequest)
   }
 
-  def storeTransactions(trytes: List[String]): StoreTransactionsResponse = {
+  def storeTransactions(trytes: List[String]): Future[StoreTransactionsResponse] = {
     val storeTransactionsRequest = service
       .storeTransactionsRequest(IotaStoreTransactionsRequest(trytes))
     executeRequest(storeTransactionsRequest)
