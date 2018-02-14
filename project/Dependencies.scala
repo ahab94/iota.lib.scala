@@ -10,10 +10,6 @@ object Dependencies {
     "com.softwaremill.sttp" %% "async-http-client-backend" % Consts.STTP_VERSION,
     "com.softwaremill.sttp" %% "okhttp-backend" % Consts.STTP_VERSION,
     "com.softwaremill.sttp" %% "async-http-client-backend-future" % Consts.STTP_VERSION,
-    "com.softwaremill.sttp" %% "okhttp-backend-monix" % Consts.STTP_VERSION,
-    "com.softwaremill.sttp" %% "async-http-client-backend-monix" % Consts.STTP_VERSION,
-    "com.softwaremill.sttp" %% "async-http-client-backend-cats" % Consts.STTP_VERSION,
-    "com.softwaremill.sttp" %% "async-http-client-backend-fs2" % Consts.STTP_VERSION,
     "com.softwaremill.sttp" %% "akka-http-backend" % Consts.STTP_VERSION
   )
   

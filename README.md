@@ -18,8 +18,63 @@ After you've successfully installed the library dependency, it is fairly easy to
 ```SCALA
   val iotaClient = new IotaClient() //This will hit http://localhost:14625
 ```
+
 Connecting to your device's local node with the default settings and fetching the node info is quite easy...
+
 ```SCALA
   val iotaCore = new IotaClient(IotaClientConfig(protocol = "http", host = "localhost", port = 14265))
   val nodeInfo = iotaCore.getNodeInfo
 ```
+
+For Asynchronous API calls
+
+```SCALA
+val iotaAsyncClient = new IotaAsyncClient()
+val nodeInfo: Future[GetNodeInfoResponse] = iotaAsyncClient.getNodeInfo
+``` 
+Specifying `host`, `protocol` and `port` is done in similar fashion.
+```SCALA
+val iotaAsyncClient = new IotaAsyncClient(IotaClientConfig(protocol = "http", host = "localhost", port = 14265))
+val nodeInfo: Future[GetNodeInfoResponse] = iotaAsyncClient.getNodeInfo
+```
+
+# Custom API Backends
+
+This Iota Client Library supports the flexibility of using different API Backends of varying concurrency needs of different Applications.
+
+Supported API Backends are listed below
+
+Custom-Backend | Type | Class | Response wrapper	
+--- | --- |  --- | --- 
+Akka-Http | Async | `AkkaHttpBackend()` | `scala.concurrent.Future`
+OkHttp-Future-Backend | Async  | `OkHttpFutureBackend()` | `scala.concurrent.Future	`
+OkHttp-Backend | Sync  | `OkHttpBackend()` | None (Id)
+
+## Using a Custom API Backend
+
+Using a custom api backend is very simple...
+
+Lets say you want to use OkHttp Async Backend
+
+```SCALA
+  import com.softwaremill.sttp.okhttp.OkHttpFutureBackend
+  val iotaAsyncClient = new IotaAsyncClient(asyncApiBackend = Some(OkHttpFutureBackend()))
+```
+
+or Akka-Http Async Backend
+
+```SCALA
+  import com.softwaremill.sttp.akkahttp.AkkaHttpBackend
+  val iotaAsyncClient = new IotaAsyncClient(asyncApiBackend = Some(AkkaHttpBackend()))
+```
+
+or OkHttp Sync Backend
+
+```SCALA
+  import com.softwaremill.sttp.okhttp.OkHttpBackend
+  val iotaClient = new IotaClient(customApiBackend = Some(OkHttpBackend()))
+```
+
+Switching API Backends is that simple...
+
+---
