@@ -11,19 +11,36 @@ The Scala wrapper around IOTA is designed to be thread-safe and kept as simple a
 It should be noted that the Scala Library as it stands right now is an early release. There might be some unexpected results.
 Please let us know [here](https://github.com/ahab94/iota.lib.scala/issues).
 
+## Installation
+
+The IOTA Java library is available on [**jitpack.io**][jitpack].
+
+### SBT Dependency
+
+To use the IOTA Java library in your Maven build add this to your root `pom.xml` file:
+```SCALA
+resolvers += "jitpack" at "https://jitpack.io"
+```
+
+Add this in your module `pom.xml` file:
+```SCALA
+libraryDependencies += "com.github.ahab94" % "iota.lib.scala" % "0.3"	
+```
+
+
 # Getting Started
 
 After you've successfully installed the library dependency, it is fairly easy to get started by simply creating a new IotaClient instance.
 
 ```SCALA
-  val iotaClient = new IotaClient() //This will hit http://localhost:14625
+val iotaClient = new IotaClient() //This will hit http://localhost:14625
 ```
 
 Connecting to your device's local node with the default settings and fetching the node info is quite easy...
 
 ```SCALA
-  val iotaCore = new IotaClient(IotaClientConfig(protocol = "http", host = "localhost", port = 14265))
-  val nodeInfo = iotaCore.getNodeInfo
+val iotaCore = new IotaClient(IotaClientConfig(protocol = "http", host = "localhost", port = 14265))
+val nodeInfo = iotaCore.getNodeInfo
 ```
 
 For Asynchronous API calls
@@ -57,22 +74,22 @@ Using a custom api backend is very simple...
 Lets say you want to use OkHttp Async Backend
 
 ```SCALA
-  import com.softwaremill.sttp.okhttp.OkHttpFutureBackend
-  val iotaAsyncClient = new IotaAsyncClient(asyncApiBackend = Some(OkHttpFutureBackend()))
+import com.softwaremill.sttp.okhttp.OkHttpFutureBackend
+val iotaAsyncClient = new IotaAsyncClient(asyncApiBackend = Some(OkHttpFutureBackend()))
 ```
 
 or Akka-Http Async Backend
 
 ```SCALA
-  import com.softwaremill.sttp.akkahttp.AkkaHttpBackend
-  val iotaAsyncClient = new IotaAsyncClient(asyncApiBackend = Some(AkkaHttpBackend()))
+import com.softwaremill.sttp.akkahttp.AkkaHttpBackend
+val iotaAsyncClient = new IotaAsyncClient(asyncApiBackend = Some(AkkaHttpBackend()))
 ```
 
 or OkHttp Sync Backend
 
 ```SCALA
-  import com.softwaremill.sttp.okhttp.OkHttpBackend
-  val iotaClient = new IotaClient(customApiBackend = Some(OkHttpBackend()))
+import com.softwaremill.sttp.okhttp.OkHttpBackend
+val iotaClient = new IotaClient(customApiBackend = Some(OkHttpBackend()))
 ```
 
 Switching API Backends is that simple...
