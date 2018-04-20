@@ -17,12 +17,14 @@ The IOTA Java library is available on [**jitpack.io**][jitpack].
 
 ### SBT Dependency
 
-To use the IOTA Java library in your Maven build add this to your root `pom.xml` file:
+To use the SOTA library in your SBT build add this to your root `build.sbt` file
+
 ```SCALA
 resolvers += "jitpack" at "https://jitpack.io"
 ```
 
-Add this in your module `pom.xml` file:
+Add this library dependency in your  `build.sbt` file
+
 ```SCALA
 libraryDependencies += "com.github.ahab94" % "iota.lib.scala" % "0.3"	
 ```
