@@ -13,7 +13,7 @@ Please let us know [here](https://github.com/ahab94/iota.lib.scala/issues).
 
 ## Installation
 
-The IOTA Java library is available on [**jitpack.io**][jitpack].
+The SOTA library is available on **jitpack.io**.
 
 ### SBT Dependency
 
